@@ -6,6 +6,10 @@ from datetime import datetime
 class BookCategoryBase(BaseModel):
     category_name:str
 
+
+class BookUpdateRequest(BookCategoryBase):
+     class Config:
+        orm_mode=True
 class BookCategoryCreate(BookCategoryBase):
     pass
 

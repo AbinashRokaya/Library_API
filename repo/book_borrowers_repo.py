@@ -2,7 +2,7 @@ from fastapi import Depends,status,HTTPException
 from datetime import date,timedelta
 from sqlalchemy.orm import Session
 from typing import List
-from schema.book_borrowers_schema import BookBorrowersCreate,BookBorrowersResponse
+from schema.book_borrowers_schema import BookBorrowersCreate,BookBorrowersResponse,BookBorrowesResponse_1
 from model.book import Book,BookBorrowers
 from model.student import Student
 from model.transactionlogs import Transactionlogs
@@ -13,7 +13,7 @@ from typing import List
 
 today=date.today()
 future_date=today+timedelta(days=15)
-def create_book_borrowers(book_borrowers:BookBorrowersCreate,db:Session,current_user:SystemUser)->BookBorrowersResponse:
+def create_book_borrowers(book_borrowers:BookBorrowersCreate,db:Session,current_user:SystemUser)->BookBorrowesResponse_1:
     ### Check the Student id 
     student=db.query(Student).filter(Student.stud_id==book_borrowers.student_id).first()
     if student is None:
@@ -30,6 +30,8 @@ def create_book_borrowers(book_borrowers:BookBorrowersCreate,db:Session,current_
     Not_book_list=[]
     book_already_borrow=[]
     no_copies_book_found=[]
+    msg={"book copies":[],"alredy borrow":[],"not found book":[],"book add":[]}
+
     for book in book_borrowers.Book_borrowers:
         book_present=db.query(Book).filter(Book.book_id==book.book_id).first()
         if book_present:
@@ -38,15 +40,20 @@ def create_book_borrowers(book_borrowers:BookBorrowersCreate,db:Session,current_
             BookBorrowers.stud_id == student.stud_id).first()
             if book_present.copies <=0:
                 no_copies_book_found.append(book_present.book_id)
+                msg["book copies"].append(f"book id {book_present.book_id} copies are alredy finished ")
             
             else:
                 if check_book_double:
                     book_already_borrow.append(book_present.book_id)
+                    msg["alredy borrow"].append(f"book id {book_present.book_id} is alredy borrowed")
                 else:
 
                     Book_list_id.append(book_present.book_id)
+                    msg["book add"].append(f"book id {book_present.book_id} is added")
+
         else:
             Not_book_list.append(book.book_id)
+            msg["not found book"].append(f"book id {book.book_id} is not found")
 
     for present_book in Book_list_id:
         any_copy_of_book=db.query(Book).filter(Book.book_id==present_book).first()
@@ -76,9 +83,6 @@ def create_book_borrowers(book_borrowers:BookBorrowersCreate,db:Session,current_
 
     
     
-    return BookBorrowersResponse(borrowers_id=new_book_borrowers.borrowers_id,
-                                 book_id=new_book_borrowers.book_id,
-                                     stud_id=new_book_borrowers.stud_id,
-                                     release_date=today,
-                                     due_date=future_date
-                                 )
+    return BookBorrowesResponse_1(msg=msg)
+
+                                 

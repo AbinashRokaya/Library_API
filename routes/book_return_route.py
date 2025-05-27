@@ -1,6 +1,6 @@
 from fastapi import APIRouter,Depends,HTTPException,status
 from database.database import get_db
-from schema.return_schema import BookReturnsCreate,BookReturnsResponse
+from schema.return_schema import BookReturnsCreate,BookReturnsResponse,BookReturnsResponse_1
 from sqlalchemy.orm import Session
 from model.book import BookReturns,BookBorrowers
 from typing import List
@@ -14,10 +14,10 @@ route=APIRouter(
 )
 
 @route.post("/add")
-def book_return_create(book_return:BookReturnsCreate,db:Session=Depends(get_db),current_user:SystemUser=Depends(get_current_user)):
-    return_repo.create_book_return(book_return,db=db,current_user=current_user)
+def book_return_create(book_return:BookReturnsCreate,db:Session=Depends(get_db),current_user:SystemUser=Depends(get_current_user))->BookReturnsResponse_1:
+    return_book=return_repo.create_book_return(book_return,db=db,current_user=current_user)
 
-    return {"message":"New book return is added"}
+    return return_book
 
 
 @route.get("/all",response_model=List[BookReturnsResponse])

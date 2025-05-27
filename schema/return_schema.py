@@ -2,19 +2,26 @@ from pydantic import BaseModel
 from typing import Optional
 from schema.enum import Status
 from datetime import datetime
-
+from typing import List,Dict
 
 
 class BookReturnsBase(BaseModel):
-    borrowers_id:int
-    return_date:datetime
-    fine_amount:float
+    book_id:int
 
-class BookReturnsCreate(BookReturnsBase):
-    pass
+class BookReturnsCreate(BaseModel):
+    student_id:int
+
+    return_book:List[BookReturnsBase]
 
 class BookReturnsResponse(BookReturnsBase):
     return_id:int
+
+    class Config:
+        orm_mode=True
+
+class BookReturnsResponse_1(BaseModel):
+    msg:Optional[Dict[str,List[str]]]
+    fine_amount:Optional[int]
 
     class Config:
         orm_mode=True

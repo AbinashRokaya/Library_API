@@ -12,7 +12,7 @@ class StaffBase(BaseModel):
 
 
 class StaffCreate(StaffBase):
-     password: constr(min_length=6)
+     password: str
 
 class StaffOut(StaffBase):
     staff_id:int
@@ -27,5 +27,5 @@ class StaffUpdate(BaseModel):
     email:Optional[EmailStr]
     address:Optional[str]
     role:Optional[UserRole]
-    password:Optional[constr(min_length=6)]
+    password:Optional[str]
 

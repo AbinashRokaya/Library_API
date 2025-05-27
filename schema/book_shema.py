@@ -5,6 +5,9 @@ from datetime import datetime
 from schema.book_Category import BookCategoryCreate
 from schema.publisher import PublisherCreate
 from schema.author_schema import AuthorCreate
+
+
+
 class book_description(BaseModel):
     book_id:int
     title:str
@@ -20,6 +23,20 @@ class book_description_1(BaseModel):
     cost:float
     copies:int
     status:Status
+
+class BookResponse(BaseModel):
+    title:Optional[str]=None
+    edition:Optional[str]=None
+    cost:Optional[float]=None
+    copies:Optional[int]=None
+    status:Optional[Status]=None
+
+    class Config:
+        orm_mode=True
+
+
+
+
 class BookBase(BaseModel):
 
     description:book_description_1
@@ -40,13 +57,12 @@ class BookCreate(BookBase):
     pass
 
 class BookUpdate(BaseModel):
-    title:Optional[str]
-    edition:Optional[str]
-    cost:Optional[float]
-    copies:Optional[int]
-    status:Optional[Status]
-    category_id:Optional[int]
-    published_id:Optional[int]
+    title:Optional[str]=None
+    edition:Optional[str]=None
+    cost:Optional[float]=None
+    copies:Optional[int]=None
+    status:Optional[Status]=None
+    
     
 
 class BookOut(BookBase):

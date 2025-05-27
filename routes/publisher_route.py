@@ -1,12 +1,13 @@
 from fastapi import APIRouter,Depends,HTTPException,status
 from database.database import get_db
-from schema.publisher import PublisherCreate,PublisherOut
+from schema.publisher import PublisherCreate,PublisherOut,PublisherUpdate
 
 from sqlalchemy.orm import Session
 from model.book import Publisher
 from typing import List
 from auth.auth_dependancy import get_current_user
 from schema.token_shema import SystemUser
+from repo import publisher_repo
 
 route=APIRouter(
     prefix="/Publisher",
@@ -35,4 +36,11 @@ def get_all_publisher(db:Session=Depends(get_db),current_user:SystemUser=Depends
         raise HTTPException(status_code=404,detail="Not Found")
     
     return all_publisher
+
+
+@route.patch("/update/{publisher_id}")
+def update_publisher(publisher_id:int,publisher_value:PublisherUpdate,db:Session=Depends(get_db),current_user:SystemUser=Depends(get_current_user)):
+    return publisher_repo.update_publisher(publisher_id=publisher_id,publisher_value=publisher_value,db=db)
+    
+
     

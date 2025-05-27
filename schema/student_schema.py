@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from schema.enum import Gender
 from typing import Optional
-from datetime import date
+from datetime import date,datetime
 
 
 class StudentBase(BaseModel):
@@ -25,12 +25,19 @@ class StudentOut(StudentBase):
 
 
 class StudentUpdate(BaseModel):
-    name:Optional[str]
-    course:Optional[str]
-    year:Optional[int]
-    contract:Optional[str]
-    birth:Optional[date]
-    gender:Optional[Gender]
+    name: Optional[str] = None
+    course: Optional[str] = None
+    year: Optional[int] = None
+    contract: Optional[str] = None
+    birth: Optional[date] = None
+    gender: Optional[Gender] = None
 
 
 
+class GetStudentID(BaseModel):
+    student_id:int
+
+
+
+
+    

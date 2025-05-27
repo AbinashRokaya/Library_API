@@ -1,12 +1,13 @@
 from fastapi import APIRouter,Depends,HTTPException,status
 from database.database import get_db
 from schema.book_shema import BookCategoryCreate
-from schema.book_Category import BookCategoryOut
+from schema.book_Category import BookCategoryOut,BookUpdateRequest
 from sqlalchemy.orm import Session
 from model.book import BookCategory
 from typing import List
 from auth.auth_dependancy import get_current_user
 from schema.token_shema import SystemUser
+from repo import book_category_repo
 
 route=APIRouter(
     prefix="/category",
@@ -36,3 +37,11 @@ def get_all_category(db:Session=Depends(get_db),current_user:SystemUser=Depends(
     
     return all_category
     
+
+@route.get("/{category_name}")
+def get_category_by_name(category_name:str,db:Session=Depends(get_db),current_user:SystemUser=Depends(get_current_user)):
+    return book_category_repo.category_by_name(category_name=category_name,db=db)
+
+@route.patch("/update/{category_id}")
+def update_category(category_id:int,catetory_name:BookUpdateRequest,db:Session=Depends(get_db)):
+    return book_category_repo.category_update(category_id=category_id,category_name=catetory_name,db=db)

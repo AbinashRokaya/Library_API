@@ -17,5 +17,5 @@ class AuthorOut(AuthorBase):
         orm_mode=True
 
 class AuthorUpdate(BaseModel):
-    author_name:Optional[str]
+    author_name:Optional[str]=None
 

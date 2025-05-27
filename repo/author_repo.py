@@ -1,7 +1,7 @@
 from fastapi import Depends,status,HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from schema.author_schema import AuthorCreate,AuthorOut
+from schema.author_schema import AuthorCreate,AuthorOut,AuthorUpdate
 from model.book import Author
 
 
@@ -24,3 +24,22 @@ def create_author(author:AuthorCreate,db:Session)->AuthorOut:
         
     
     return get_author
+
+
+def update_author(author_id:int,auhtor_value:AuthorUpdate,db:Session):
+    auhtor=db.query(Author).filter(Author.author_id==author_id).first()
+
+    if not auhtor:
+        raise HTTPException(status_code=404,detail=f"auhtor id {author_id} not found")
+    
+    update_data=auhtor_value.dict(exclude_unset=True)
+
+    for key, value in update_data.items():
+        setattr(auhtor,key,value)
+
+    db.commit()
+    db.refresh(auhtor)
+
+    return auhtor
+
+    

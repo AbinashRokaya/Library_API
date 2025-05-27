@@ -1,6 +1,6 @@
-from fastapi import APIRouter,Depends,HTTPException,status
+from fastapi import APIRouter,Depends,HTTPException,status,Query
 
-from schema.book_shema import BookCreate,BookOut,BookCreate_1,BookCreateResponse
+from schema.book_shema import BookCreate,BookCreate_1,BookCreateResponse,BookUpdate,BookResponse
 
 from typing import List
 from auth.auth_dependancy import get_current_user
@@ -16,6 +16,7 @@ from schema.book_Category import BookCategoryCreate
 from schema.publisher import PublisherCreate
 from schema.author_schema import AuthorCreate
 from schema.book_author_schema import Book_AuthorCreate,Book_AuthorOut
+from model.book import Book
 
 route=APIRouter(
     prefix="/book",
@@ -44,8 +45,23 @@ def bookCreate(book:BookCreate,db: Session = Depends(get_db),current_user:System
 
     return response
 
+@route.get("/all")
+def get_all_book(db:Session=Depends(get_db)):
+    book=db.query(Book).all()
+
+    if not book:
+        raise HTTPException(status_code=404,detail="Book Not Found")
     
+    return book
     
+@route.get("/{book_name}")
+def get_book_by_name(book_name:str ,db:Session=Depends(get_db),current_user:SystemUser=Depends(get_current_user)):
+    return book_repo.get_book_by_name(book_name=book_name,db=db)
+
+
+@route.patch("/update/{book_id}")
+def book_update(book_id:int,update_book_value:BookUpdate,db:Session=Depends(get_db),current_user:SystemUser=Depends(get_current_user))->BookResponse:
+    return book_repo.update_book(book_id=book_id,update_book_value=update_book_value,db=db)
 
 # @route.get("/all",response_model=List[BookOut],)
 # def get_all_book(db:Session=Depends(get_db),current_user:SystemUser=Depends(get_current_user)):

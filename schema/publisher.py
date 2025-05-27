@@ -16,5 +16,6 @@ class PublisherOut(PublisherBase):
     class Config:
         orm_mode=True
 class PublisherUpdate(BaseModel):
-    publisher_name:Optional[str]
+    publisher_name:Optional[str]=None
+
 

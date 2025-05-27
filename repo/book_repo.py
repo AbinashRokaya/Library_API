@@ -1,8 +1,8 @@
-from fastapi import Depends,status,HTTPException
+from fastapi import Depends,status,HTTPException,Query
 
 from sqlalchemy.orm import Session
 from typing import List
-from schema.book_shema import BookCreate,BookOut,BookCreate_1,book_description
+from schema.book_shema import BookCreate,BookOut,BookCreate_1,book_description,BookUpdate,BookResponse
 from model.book import Book
 
 
@@ -32,4 +32,31 @@ def create_book(book:BookCreate_1,db:Session)->book_description:
     )
      
     return book_detail
+
+def get_book_by_name(book_name:str, db: Session ):
+    book=db.query(Book).filter(Book.title.like(f"%{book_name}%")).all()
+    if not book:
+        raise HTTPException(status_code=404,detail=f"book name {book_name} not found")
+
+    return book
+
      
+def update_book(book_id:int,update_book_value:BookUpdate,db:Session)->BookResponse:
+    book=db.query(Book).filter(Book.book_id==book_id).first()
+
+    if book is None:
+        raise HTTPException(status_code=404,detail=f"book id {book_id} is not found")
+    
+    update_data=update_book_value.dict(exclude_unset=True)
+
+    for key,value in update_data.items():
+        setattr(book,key,value)
+
+    db.commit()
+    db.refresh(book)
+
+    return BookResponse(title=book.title,
+                            edition=book.edition,
+                            cost=book.cost,
+                            copies=book.copies,
+                            status=book.status)
