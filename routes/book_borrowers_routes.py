@@ -8,6 +8,8 @@ from auth.auth_dependancy import get_current_user
 from schema.token_shema import SystemUser
 from repo import book_borrowers_repo
 from typing import List
+from schema.book_shema import BookResponse
+from model.book import Book
 
 route=APIRouter(
     prefix="/borrowers",
@@ -21,11 +23,29 @@ def borrower_create(borrower:BookBorrowersCreate,db:Session=Depends(get_db),curr
     return book_borrower
 
 
-@route.get("/all",response_model=List[BookBorrowersResponse])
-def get_all_borrower(db:Session=Depends(get_db),current_user:SystemUser=Depends(get_current_user)):
-    all_borrower=db.query(BookBorrowers).all()
-
+@route.get("/{student_id}",response_model=List[BookBorrowersResponse])
+def get_all_borrower(student_id:int,db:Session=Depends(get_db),current_user:SystemUser=Depends(get_current_user)):
+    all_borrower=db.query(BookBorrowers).filter(BookBorrowers.stud_id==student_id).all()
+    
     if not all_borrower:
         raise HTTPException(status_code=404,detail="Not Found")
-    return all_borrower
+    
+    book_list_all=[]
+    for book in all_borrower:
+        book_list=db.query(Book).filter(Book.book_id==book.book_id).first()
+        list=BookBorrowersResponse(borrowers_id=book.book_id,
+                                   Book=BookResponse(
+                                       title=book_list.title,
+                                       edition=book_list.edition,
+                                       cost=book_list.cost,
+                                       copies=book_list.copies,
+                                       status=book_list.status
+                                   ))
+        
+        book_list_all.append(list)
+    
+    
+    
+
+    return book_list_all
     

@@ -3,10 +3,12 @@ from typing import Optional
 from schema.enum import Status
 from datetime import datetime
 from typing import List,Dict
+from schema.book_shema import BookResponse
 
 
 class BookBorrowersBase(BaseModel):
     book_id:int
+    
     
 
 
@@ -15,8 +17,9 @@ class BookBorrowersCreate(BaseModel):
     Book_borrowers:List[BookBorrowersBase]
 
 
-class BookBorrowersResponse(BookBorrowersBase):
-    borrowers_id:int
+class BookBorrowersResponse(BaseModel):
+    borrowers_id:Optional[int]=None
+    Book:Optional[BookResponse]=None
 
     class Config:
         orm_mode=True
