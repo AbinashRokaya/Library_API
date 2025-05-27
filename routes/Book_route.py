@@ -55,7 +55,7 @@ def get_all_book(db:Session=Depends(get_db)):
     return book
     
 @route.get("/{book_name}")
-def get_book_by_name(book_name:str ,db:Session=Depends(get_db),current_user:SystemUser=Depends(get_current_user)):
+def get_book_by_name(book_name:str ,db:Session=Depends(get_db)):
     return book_repo.get_book_by_name(book_name=book_name,db=db)
 
 

@@ -39,7 +39,7 @@ def get_all_category(db:Session=Depends(get_db),current_user:SystemUser=Depends(
     
 
 @route.get("/{category_name}")
-def get_category_by_name(category_name:str,db:Session=Depends(get_db),current_user:SystemUser=Depends(get_current_user)):
+def get_category_by_name(category_name:str,db:Session=Depends(get_db)):
     return book_category_repo.category_by_name(category_name=category_name,db=db)
 
 @route.patch("/update/{category_id}")

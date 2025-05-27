@@ -21,7 +21,7 @@ def book_return_create(book_return:BookReturnsCreate,db:Session=Depends(get_db),
 
 
 @route.get("/all",response_model=List[BookReturnsResponse])
-def get_all_book_return(db:Session=Depends(get_db)):
+def get_all_book_return(db:Session=Depends(get_db),current_user:SystemUser=Depends(get_current_user)):
     all_book_return=db.query(BookReturns).all()
 
     if not all_book_return:

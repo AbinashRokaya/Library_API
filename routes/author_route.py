@@ -32,6 +32,6 @@ def get_all_author(db:Session=Depends(get_db),current_user:SystemUser=Depends(ge
     
 
 @route.patch("/update/{author_id}")
-def update_author(author_id:int,author_value:AuthorUpdate,db:Session=Depends(get_db)):
+def update_author(author_id:int,author_value:AuthorUpdate,db:Session=Depends(get_db),current_user:SystemUser=Depends(get_current_user)):
 
     return author_repo.update_author(author_id=author_id,auhtor_value=author_value,db=db)
